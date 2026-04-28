@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XV Años - Emily Flores</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { height: 100%; width: 100%; background-color: #ffffff; overflow: hidden; font-family: 'Montserrat', sans-serif; }
+
+        .slider {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .slide {
+            height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* TRANSICIÓN DE 2 SEGUNDOS */
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .slide.visible { opacity: 1; }
+
+        /* Estilo base para los recuadros interactivos */
+        .contenedor-interactivo {
+            background: rgba(0, 0, 0, 0.2); /* Fondo un poco más oscuro para resaltar texto blanco */
+            padding: 15px 25px;
+            border-radius: 15px;
+            text-align: center;
+            color: #ffffff; /* TEXTO BLANCO */
+            text-decoration: none;
+            display: inline-block;
+            backdrop-filter: blur(5px); /* Efecto de cristal esmerilado */
+        }
+
+        /* Márgenes de altura */
+        .margin-contador { margin-top: 650px; color: #4a4a4a; background: rgba(255, 255, 255, 0.3); }
+        .margin-ubicacion { margin-top: 550px; } 
+        .margin-boton { margin-top: 520px; }
+
+        .reloj { display: flex; gap: 20px; font-size: 1.8rem; font-weight: 700; }
+        .tiempo-bloque { display: flex; flex-direction: column; }
+        .label { font-size: 0.6rem; text-transform: uppercase; margin-top: 5px; font-weight: 300; }
+
+        /* TEXTO EN NEGRITA Y BLANCO PARA UBICACIÓN Y BOTÓN */
+        .texto-bold {
+            font-size: 1.2rem;
+            font-weight: 700; /* BOLD */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+        #btn-musica {
+            position: fixed; top: 25px; right: 25px; z-index: 1000;
+            background: rgba(255, 255, 255, 0.8); width: 45px; height: 45px;
+            border-radius: 50%; display: flex; justify-content: center;
+            align-items: center; cursor: pointer; font-size: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="musicaFondo" loop><source src="musica.mp3" type="audio/mpeg"></audio>
+    <div id="btn-musica" onclick="toggleMusica()">🎵</div>
+
+    <div class="slider">
+        <section class="slide" style="background-image: url('Diapositiva1.jpg');"></section>
+        <section class="slide" style="background-image: url('Diapositiva2.jpg');"></section>
+        <section class="slide" style="background-image: url('Diapositiva3.jpg');"></section>
+        <section class="slide" style="background-image: url('Diapositiva4.jpg');"></section>
+        
+        <section class="slide" style="background-image: url('Diapositiva5.jpg');">
+            <div class="contenedor-interactivo margin-contador">
+                <div class="reloj" id="countdown">
+                    <div class="tiempo-bloque"><span id="days">00</span><span class="label">Días</span></div>
+                    <div class="tiempo-bloque"><span id="hours">00</span><span class="label">Hrs</span></div>
+                    <div class="tiempo-bloque"><span id="minutes">00</span><span class="label">Min</span></div>
+                    <div class="tiempo-bloque"><span id="seconds">00</span><span class="label">Seg</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="slide" style="background-image: url('Diapositiva6.jpg');">
+            <a href="https://maps.app.goo.gl/whYZ712nZefDZxyD8" class="contenedor-interactivo margin-ubicacion" target="_blank">
+                <div class="texto-bold">Ver Ubicación</div>
+                <div class="label" style="color: #ffffff; font-weight: 700;">Abrir Google Maps</div>
+            </a>
+        </section>
+
+        <section class="slide" style="background-image: url('Diapositiva7.jpg');"></section>
+        <section class="slide" style="background-image: url('Diapositiva8.jpg');"></section>
+        <section class="slide" style="background-image: url('Diapositiva9.jpg');"></section>
+        
+        <section class="slide" style="background-image: url('Diapositiva10.jpg');">
+            <a href="https://wa.me/526221428341?text=Hola!%20Confirmo%20mi%20asistencia%20a%20los%20XV%20de%20Emily" class="contenedor-interactivo margin-boton" target="_blank">
+                <div class="texto-bold">Confirmar Asistencia</div>
+                <div class="label" style="color: #ffffff; font-weight: 700;">Vía WhatsApp</div>
+            </a>
+        </section>
+
+        <section class="slide" style="background-image: url('Diapositiva11.jpg');"></section>
+    </div>
+
+    <script>
+        const audio = document.getElementById('musicaFondo');
+        const btn = document.getElementById('btn-musica');
+
+        function toggleMusica() {
+            if (audio.paused) { audio.play(); btn.innerHTML = "⏸️"; } 
+            else { audio.pause(); btn.innerHTML = "🎵"; }
+        }
+
+        // Observer para transiciones de 2s
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+                else entry.target.classList.remove('visible');
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.slide').forEach(slide => observer.observe(slide));
+
+        // Música desde el principio al primer toque
+        document.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                btn.innerHTML = "⏸️";
+            }
+        }, { once: true });
+
+        // Contador para el Sábado 2 de Mayo de 2026
+        const eventDate = new Date("May 2, 2026 19:00:00").getTime();
+        setInterval(function() {
+            const now = new Date().getTime();
+            const distance = eventDate - now;
+            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+            if (document.getElementById("days")) {
+                document.getElementById("days").innerText = d.toString().padStart(2, '0');
+                document.getElementById("hours").innerText = h.toString().padStart(2, '0');
+                document.getElementById("minutes").innerText = m.toString().padStart(2, '0');
+                document.getElementById("seconds").innerText = s.toString().padStart(2, '0');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
